@@ -144,8 +144,13 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
 }
 
 /**
- * @brief Mating criteria has not been finalized.
- * TODO: This function causes a segfault because it mixes the two char pointers
+ * @brief Mating criteria has not been finalized. Right now the genome with more
+ * fitness is completely copied to the weaker genome, and the two are later mutated
+ * to form distinct offsprings. This setp is not in adherence with the typical
+ * genetic algorithm, and can be improved a lot.
+ * 
+ * ! This function causes a segfault because it mixes the two char pointers
+ * TODO: Add crossover between parent genomes
  *
  * @param genome_1 first genome
  * @param genome_2 second genome
