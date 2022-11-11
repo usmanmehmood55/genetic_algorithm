@@ -15,8 +15,9 @@ int main(int argc, char ** argv)
     {
         return -EINVAL;
     }
+    
+    genome_t target = initialize_target(argv[1]);
 
-    char * target       = argv[1];
     int    target_size  = strnlen(target, UINT16_MAX);
 
     char * parent_1     = malloc(target_size);
