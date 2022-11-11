@@ -1,5 +1,15 @@
 #include "genetic_algorithm.h"
 
+genome_t initialize_target(char * string)
+{
+    return (genome_t)
+    {
+        .genes   = string,
+        .length  = strnlen(string, UINT16_MAX),
+        .fitness = 0,
+    };
+}
+
 /**
  * @brief Function for printing the genomes in a readable format
  * 

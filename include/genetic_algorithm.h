@@ -9,6 +9,17 @@
 
 #define GENES "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+typedef char gene_t;
+
+typedef struct genome_t
+{
+    gene_t   * genes;
+    uint16_t   length;
+    int        fitness;
+} genome_t;
+
+genome_t initialize_target(char * string);
+
 /**
  * @brief Function for printing the genomes in a readable format
  * 
