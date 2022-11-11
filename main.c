@@ -51,8 +51,9 @@ int main(int argc, char ** argv)
         }
 
         print_genomes(parent_1, parent_2, target_size);
-        if (fitness_score(target, parent_1, target_size) == target_size || fitness_score(target, parent_2, target_size) == target_size)
+        if (fitness_score(target, parent_1, target_size) == 0 || fitness_score(target, parent_2, target_size) == 0)
         {
+            printf("\rConvergence Achieved!\n");
             break;
         }
 
@@ -63,8 +64,6 @@ int main(int argc, char ** argv)
     }
 
     print_genomes(parent_1, parent_2, target_size);
-
-    printf("\rConvergence Achieved!\n");
     printf("\rNumber of Iterations: %llu\n", iterations);
 
     free(parent_1);
