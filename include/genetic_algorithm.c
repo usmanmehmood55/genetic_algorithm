@@ -140,7 +140,7 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
         }
     }
 
-    return total_score;
+    return total_score - length;
 }
 
 /**
