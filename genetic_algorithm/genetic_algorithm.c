@@ -11,6 +11,37 @@ genome_t initialize_target(char * string)
 }
 
 /**
+ * @brief Create a genome object
+ * 
+ * @param genome string created form mutated genes
+ * @param length length of genome
+ */
+genome_t genome_create(uint16_t length)
+{
+    genome_t genome =
+    {
+        .genes   = calloc(length, sizeof(gene_t)),
+        .length  = length,
+        .fitness = ((int)length * -3)
+    };
+
+    for (uint16_t this_gene = 0; this_gene < length; this_gene++)
+    {
+        gene_t mutated_gene = get_mutated_gene();
+        genome.genes[this_gene] = mutated_gene;
+    }
+
+    return genome;
+}
+
+void genome_destroy(genome_t * p_genome)
+{
+    free(p_genome->genes);
+    p_genome->fitness = 0;
+    p_genome->length  = 0;
+}
+
+/**
  * @brief Function for printing the genomes in a readable format
  * 
  * @param genome_1 first genome string
@@ -74,23 +105,6 @@ char get_mutated_gene(void)
 }
 
 /**
- * @brief Create a genome object
- * 
- * @param genome string created form mutated genes
- * @param length length of genome
- */
-void initialize_genome(char *genome, uint16_t length)
-{
-    (void)memset(genome, 0, length);
-
-    for (uint16_t gene = 0; gene < length; gene++)
-    {
-        char mutated_gene = get_mutated_gene();
-        genome[gene] = mutated_gene;
-    }
-}
-
-/**
  * @brief Calculates fitness of the genome based on how close it is to the target
  * 
  * @param target target genome string
@@ -101,65 +115,72 @@ void initialize_genome(char *genome, uint16_t length)
  */
 int fitness_score(const char *target, const char *genome, uint16_t length)
 {
-    int total_score = 0;
+    int fitness = (int)length * -3;
 
-    // for eliminating genes that are not in the TARGET
-    for (uint16_t gene = 0; gene < length; gene++)
+    // Check for the characters that are exactly in their places.
+    for (uint16_t i = 0; i < length; i++)
     {
-        int gene_non_existence_score = 0;
-
-        for (uint16_t target_gene = 0; target_gene < length; target_gene++)
+        if (genome[i] == target[i])
         {
-            if (genome[gene] != target[target_gene])
+            fitness += 3;
+        }
+    }
+
+    // Check for characters that are in the genome and also in the target (regardless of position)
+    for (uint16_t i = 0; i < length; i++)
+    {
+        bool found = false;
+        for (uint16_t j = 0; j < length; j++)
+        {
+            if (genome[i] == target[j])
             {
-                gene_non_existence_score++;
+                found = true;
+                break;
             }
         }
 
-        if (gene_non_existence_score == (int)length)
+        if (found)
         {
-            total_score--;
+            fitness += 1;
+        }
+        else
+        {
+            fitness -= 1;
         }
     }
 
-    // for enhancing genes that are in the TARGET
-    for (uint16_t gene = 0; gene < length; gene++)
-    {
-        int gene_existence_score = 0;
-
-        for (uint16_t target_gene = 0; target_gene < length; target_gene++)
-        {
-            if (genome[gene] == target[target_gene])
-            {
-                gene_existence_score++;
-            }
-        }
-
-        if (gene_existence_score == (int)length)
-        {
-            total_score++;
-        }
-    }
-
-    // for matching the exact string
-    for (uint16_t gene = 0; gene < length; gene++)
-    {
-        if (genome[gene] == target[gene])
-        {
-            total_score++;
-        }
-    }
-
-    total_score -= (int)length;
-
-    return total_score;
+    return fitness;
 }
 
 /**
- * @brief Mating criteria has not been finalized. Right now the genome with more
- * fitness is completely copied to the weaker genome, and the two are later mutated
- * to form distinct offsprings. This setp is not in adherence with the typical
- * genetic algorithm, and can be improved a lot.
+ * @brief Mating combines the genomes of two parents over a random crossover point,
+ * and the sequence of parents for the crossover is randomly selected.
+ * 
+ * @details
+ * 
+ * Take these two parents, of size 7:
+ * 
+ * index     = 0, 1, 2, 3, 4, 5, 6
+ * parent 1  = a, b, c, d, e, f, g
+ * parent 2  = h, i, j, k, l, m, n
+ * 
+ * random crossover point is 3
+ * 
+ * index     = 0, 1, 2, 3, 4, 5, 6
+ * parent 1  = a, b, c, d,
+ * parent 2  =             l, m, n
+ * -------------------------------
+ * offspring = a, b, c, d, l, m, n
+ * 
+ * However to prevent parent 1 from always contributing to the first few genes
+ * and parent 2 to the remaining last, their sequence is randomly (should be 50/50)
+ * selected so with the same crossover point at 3, this can also happen
+ * 
+ * index     = 0, 1, 2, 3, 4, 5, 6
+ * parent 1  =             e, f, g
+ * parent 2  = h, i, j, k,        
+ * -------------------------------
+ * offspring = h, i, j, k, e, f, g
  * 
  * @param[in]  parent_1  first parent genome
  * @param[in]  parent_2  second parent genome
@@ -168,16 +189,17 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
  * 
  * @return char*         offspring genome
  */
-char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length, uint16_t max_mutation, uint16_t min_mutation)
+char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length)
 {
-    uint16_t crossover_point = (uint16_t)random_in_pos_range(length - 1U, 0);
+    uint16_t crossover_point = (uint16_t)random_in_pos_range((length - 1U), 0);
+    bool flip_sequence = (bool)random_in_pos_range(1, 0);
 
     // Perform single-point crossover
-    (void)memcpy(offspring, parent_1, crossover_point);
-    (void)memcpy(offspring + crossover_point, parent_2 + crossover_point, length - crossover_point);
+    (void)memcpy(offspring, flip_sequence ? parent_1 : parent_2, crossover_point);
+    (void)memcpy(offspring + crossover_point, (flip_sequence ? parent_2 : parent_1) + crossover_point, length - crossover_point);
 
-    // Perform mutation
-    mutate_genome(offspring, length, max_mutation, min_mutation);
+    // Perform mutation on 1 gene with a 50/50 chance
+    mutate_genome(offspring, length, 3U, 0U);
 
     return offspring;
 }

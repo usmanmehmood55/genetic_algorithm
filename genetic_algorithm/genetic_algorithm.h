@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define GENES "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -20,6 +21,16 @@ typedef struct genome_t
 } genome_t;
 
 genome_t initialize_target(char * string);
+
+/**
+ * @brief Create a genome object
+ * 
+ * @param genome string created form mutated genes
+ * @param length length of genome
+ */
+genome_t genome_create(uint16_t length);
+
+void genome_destroy(genome_t * p_genome);
 
 /**
  * @brief Function for printing the genomes in a readable format
@@ -48,14 +59,6 @@ int random_in_pos_range(int upper_limit, int lower_limit);
 char get_mutated_gene(void);
 
 /**
- * @brief Create a genome object
- * 
- * @param genome string created form mutated genes
- * @param length length of genome
- */
-void initialize_genome(char *genome, uint16_t length);
-
-/**
  * @brief Calculates fitness of the genome based on how close it is to the target
  * 
  * @param target target genome string
@@ -80,7 +83,7 @@ int fitness_score(const char *target, const char *genome, uint16_t length);
  * 
  * @return char*         offspring genome
  */
-char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length, uint16_t max_mutation, uint16_t min_mutation);
+char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length);
 
 /**
  * @brief Provides a mutated genome
