@@ -78,7 +78,7 @@ int main(int argc, char ** argv)
         // offsprings become parents
         parents[0] = offsprings[0];
         parents[1] = offsprings[1];
-        print_genomes(parents[0].genes, parents[1].genes, target_size);
+        print_genomes(parents[0], parents[1]);
 
         // break, if convergence
         if ((fitness_score(target.genes, parents[0].genes, target_size) == 0) || (fitness_score(target.genes, parents[1].genes, target_size) == 0))

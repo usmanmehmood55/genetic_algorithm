@@ -60,21 +60,23 @@ void genome_destroy(genome_t * p_genome)
  * 
  * @param genome_1 first genome string
  * @param genome_2 second genome string
- * @param length   length of both genomes
  */
-void print_genomes(char *genome_1, char *genome_2, uint16_t length)
+void print_genomes(genome_t genome_1, genome_t genome_2)
 {
     (void)printf("\rGenome 1: \"");
-    for (uint16_t gene = 0; gene < length; gene++)
+    for (uint16_t gene = 0; gene < genome_1.length; gene++)
     {
-        (void)printf("%c", genome_1[gene]);
+        (void)printf("%c", genome_1.genes[gene]);
     }
-    (void)printf("\"\tGenome 2: \"");
-    for (uint16_t gene = 0; gene < length; gene++)
+    (void)printf("\" (%02d)", genome_1.fitness);
+
+    (void)printf("\tGenome 2: \"");
+    for (uint16_t gene = 0; gene < genome_2.length; gene++)
     {
-        (void)printf("%c", genome_2[gene]);
+        (void)printf("%c", genome_2.genes[gene]);
     }
-    (void)printf("\"\n");
+    (void)printf("\" (%02d)", genome_2.fitness);
+    (void)printf("\n");
 }
 
 /**
@@ -129,41 +131,56 @@ char get_mutated_gene(void)
  */
 int fitness_score(const char *target, const char *genome, uint16_t length)
 {
-    int fitness = (int)length * -3;
+    int total_score = 0;
 
-    // Check for the characters that are exactly in their places.
-    for (uint16_t i = 0; i < length; i++)
+    // for eliminating genes that are not in the TARGET
+    for (uint16_t gene = 0; gene < length; gene++)
     {
-        if (genome[i] == target[i])
-        {
-            fitness += 3;
-        }
-    }
+        int gene_non_existence_score = 0;
 
-    // Check for characters that are in the genome and also in the target (regardless of position)
-    for (uint16_t i = 0; i < length; i++)
-    {
-        bool found = false;
-        for (uint16_t j = 0; j < length; j++)
+        for (uint16_t target_gene = 0; target_gene < length; target_gene++)
         {
-            if (genome[i] == target[j])
+            if (genome[gene] != target[target_gene])
             {
-                found = true;
-                break;
+                gene_non_existence_score++;
             }
         }
 
-        if (found)
+        if (gene_non_existence_score == (int)length)
         {
-            fitness += 1;
-        }
-        else
-        {
-            fitness -= 1;
+            total_score--;
         }
     }
 
-    return fitness;
+    // for enhancing genes that are in the TARGET
+    for (uint16_t gene = 0; gene < length; gene++)
+    {
+        int gene_existence_score = 0;
+
+        for (uint16_t target_gene = 0; target_gene < length; target_gene++)
+        {
+            if (genome[gene] == target[target_gene])
+            {
+                gene_existence_score++;
+            }
+        }
+
+        if (gene_existence_score == (int)length)
+        {
+            total_score++;
+        }
+    }
+
+    // for matching the exact string
+    for (uint16_t gene = 0; gene < length; gene++)
+    {
+        if (genome[gene] == target[gene])
+        {
+            total_score++;
+        }
+    }
+
+    return total_score - (int)length;
 }
 
 /**

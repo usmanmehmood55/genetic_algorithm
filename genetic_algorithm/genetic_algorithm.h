@@ -51,9 +51,8 @@ void genome_destroy(genome_t * p_genome);
  * 
  * @param genome_1 first genome string
  * @param genome_2 second genome string
- * @param length   length of both genomes
  */
-void print_genomes(char *genome_1, char *genome_2, uint16_t length);
+void print_genomes(genome_t genome_1, genome_t genome_2);
 
 /**
  * @brief Provides a pseudo random number between a positive range
