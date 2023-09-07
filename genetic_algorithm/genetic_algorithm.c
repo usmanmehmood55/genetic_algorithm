@@ -19,17 +19,17 @@ genome_t initialize_target(char * string)
  */
 void print_genomes(char *genome_1, char *genome_2, uint16_t length)
 {
-    printf("\rGenome 1: \"");
+    (void)printf("\rGenome 1: \"");
     for (uint16_t gene = 0; gene < length; gene++)
     {
-        printf("%c", genome_1[gene]);
+        (void)printf("%c", genome_1[gene]);
     }
-    printf("\"\tGenome 2: \"");
+    (void)printf("\"\tGenome 2: \"");
     for (uint16_t gene = 0; gene < length; gene++)
     {
-        printf("%c", genome_2[gene]);
+        (void)printf("%c", genome_2[gene]);
     }
-    printf("\"\n");
+    (void)printf("\"\n");
 }
 
 /**
@@ -68,9 +68,9 @@ int random_in_pos_range(int upper_limit, int lower_limit)
  *
  * @return char mutated gene character
  */
-char mutated_gene(void)
+char get_mutated_gene(void)
 {
-    return GENES[random_in_pos_range((sizeof(GENES) - 1), 0)];
+    return GENES[random_in_pos_range((sizeof(GENES) - 1U), 0)];
 }
 
 /**
@@ -85,8 +85,8 @@ void initialize_genome(char *genome, uint16_t length)
 
     for (uint16_t gene = 0; gene < length; gene++)
     {
-        char _ = mutated_gene();
-        genome[gene] = _;
+        char mutated_gene = get_mutated_gene();
+        genome[gene] = mutated_gene;
     }
 }
 
@@ -116,7 +116,7 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
             }
         }
 
-        if (gene_non_existence_score == length)
+        if (gene_non_existence_score == (int)length)
         {
             total_score--;
         }
@@ -135,7 +135,7 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
             }
         }
 
-        if (gene_existence_score == length)
+        if (gene_existence_score == (int)length)
         {
             total_score++;
         }
@@ -150,7 +150,9 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
         }
     }
 
-    return total_score - length;
+    total_score -= (int)length;
+
+    return total_score;
 }
 
 /**
@@ -159,30 +161,25 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
  * to form distinct offsprings. This setp is not in adherence with the typical
  * genetic algorithm, and can be improved a lot.
  * 
- * ! This function causes a segfault because it mixes the two char pointers
- * TODO: Add crossover between parent genomes
- *
- * @param genome_1 first genome
- * @param genome_2 second genome
+ * @param[in]  parent_1  first parent genome
+ * @param[in]  parent_2  second parent genome
+ * @param[out] offspring buffer to place offspring genome
+ * @param[in]  length    length of all genomes
  * 
- * @return char*   offspring genome
+ * @return char*         offspring genome
  */
-char *mate(char *target, char *genome_1, char *genome_2, uint16_t length)
+char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length, uint16_t max_mutation, uint16_t min_mutation)
 {
-    char *p_dominant_genome = NULL;
-    int fitness_1 = fitness_score(target, genome_1, length);
-    int fitness_2 = fitness_score(target, genome_2, length);
+    uint16_t crossover_point = (uint16_t)random_in_pos_range(length - 1U, 0);
 
-    if (fitness_1 > fitness_2)
-    {
-        p_dominant_genome = memcpy(genome_2, genome_1, length);
-    }
-    else
-    {
-        p_dominant_genome = memcpy(genome_1, genome_2, length);
-    }
+    // Perform single-point crossover
+    (void)memcpy(offspring, parent_1, crossover_point);
+    (void)memcpy(offspring + crossover_point, parent_2 + crossover_point, length - crossover_point);
 
-    return p_dominant_genome;
+    // Perform mutation
+    mutate_genome(offspring, length, max_mutation, min_mutation);
+
+    return offspring;
 }
 
 /**
@@ -195,10 +192,10 @@ char *mate(char *target, char *genome_1, char *genome_2, uint16_t length)
  */
 void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_t min_mutation)
 {
-    int total_mutations = random_in_pos_range(max_mutation, min_mutation);
-    for (uint16_t mutation = 0; mutation < total_mutations; mutation++)
+    uint16_t total_mutations = (uint16_t)random_in_pos_range(max_mutation, min_mutation);
+    for (uint16_t mutation = 0U; mutation < total_mutations; mutation++)
     {
-        int random_gene_index = random_in_pos_range((sizeof(GENES) - 1), 0);
-        genome[random_gene_index] = mutated_gene();
+        uint16_t random_gene_index = (uint16_t)random_in_pos_range(length - 1U, 0);
+        genome[random_gene_index] = get_mutated_gene();
     }
 }

@@ -2,10 +2,11 @@
 #define GENETIC_ALGORITHM_H_
 
 #include <stdint.h>
+#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include <errno.h>
+#include <stdio.h>
 
 #define GENES "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -44,7 +45,7 @@ int random_in_pos_range(int upper_limit, int lower_limit);
  *
  * @return char mutated gene character
  */
-char mutated_gene(void);
+char get_mutated_gene(void);
 
 /**
  * @brief Create a genome object
@@ -66,15 +67,20 @@ void initialize_genome(char *genome, uint16_t length);
 int fitness_score(const char *target, const char *genome, uint16_t length);
 
 /**
- * @brief Mating criteria has not been finalized.
- * TODO: This function causes a segfault because it mixes the two char pointers
- *
- * @param genome_1 first genome
- * @param genome_2 second genome
+ * @brief Mating criteria has not been finalized. Right now the genome with more
+ * fitness is completely copied to the weaker genome, and the two are later mutated
+ * to form distinct offsprings. This setp is not in adherence with the typical
+ * genetic algorithm, and can be improved a lot.
  * 
- * @return char*   offspring genome
+ * @param[in]  target    target genome
+ * @param[in]  genome_1  first parent genome
+ * @param[in]  genome_2  second parent genome
+ * @param[out] offspring buffer to place offspring genome
+ * @param[in]  length    length of all genomes
+ * 
+ * @return char*         offspring genome
  */
-char *mate(char *target, char *genome_1, char *genome_2, uint16_t length);
+char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length, uint16_t max_mutation, uint16_t min_mutation);
 
 /**
  * @brief Provides a mutated genome
