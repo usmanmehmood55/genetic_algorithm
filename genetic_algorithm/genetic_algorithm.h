@@ -20,16 +20,30 @@ typedef struct genome_t
     int        fitness;
 } genome_t;
 
-genome_t initialize_target(char * string);
+/**
+ * @brief Initialization of the target genome is slightly different
+ * as it already has allocated memory and does not need any mutation.
+ * 
+ * @param string 
+ * @return genome_t 
+ */
+genome_t target_genome_init(char * string);
 
 /**
- * @brief Create a genome object
+ * @brief Creates a new genome object with allocated memory
+ * of the given size. The genome must be manually freed by
+ * genome_destroy() after it has been used.
  * 
- * @param genome string created form mutated genes
  * @param length length of genome
  */
 genome_t genome_create(uint16_t length);
 
+/**
+ * @brief Frees the gene memory allocated to the genome and resets
+ * its fitness and length
+ * 
+ * @param[out] p_genome pointer to genome
+ */
 void genome_destroy(genome_t * p_genome);
 
 /**
@@ -70,22 +84,6 @@ char get_mutated_gene(void);
 int fitness_score(const char *target, const char *genome, uint16_t length);
 
 /**
- * @brief Mating criteria has not been finalized. Right now the genome with more
- * fitness is completely copied to the weaker genome, and the two are later mutated
- * to form distinct offsprings. This setp is not in adherence with the typical
- * genetic algorithm, and can be improved a lot.
- * 
- * @param[in]  target    target genome
- * @param[in]  genome_1  first parent genome
- * @param[in]  genome_2  second parent genome
- * @param[out] offspring buffer to place offspring genome
- * @param[in]  length    length of all genomes
- * 
- * @return char*         offspring genome
- */
-char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length);
-
-/**
  * @brief Provides a mutated genome
  * 
  * @param genome       genome string to mutate
@@ -94,5 +92,51 @@ char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t
  * @param min_mutation minimum possible genes to be mutated
  */
 void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_t min_mutation);
+
+/**
+ * @brief Mating combines the genomes of two parents over a random crossover point,
+ * while the sequence of parents for the crossover is randomly selected. After a
+ * crossover, a slight mutation is performed to avoid a local maxima from occuring.
+ * 
+ * @details
+ * 
+ * Take these two parents, of size 7:
+ * +-----------+---+---+---+---+---+---+---+
+ * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+ * |-----------|---|---|---|---|---|---|---|
+ * | parent 1  | a | b | c | d | e | f | g |
+ * | parent 2  | h | i | j | k | l | m | n |
+ * +-----------+---+---+---+---+---+---+---+
+ * 
+ * If the random crossover point is 3, the resulting offspring will look like this
+ * +-----------+---+---+---+---+---+---+---+
+ * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+ * |-----------|---|---|---|---|---|---|---|
+ * | parent 1  | a | b | c | d |   |   |   |
+ * | parent 2  |   |   |   |   | l | m | n |
+ * +-----------+---+---+---+---+---+---+---+
+ * | offspring | a | b | c | d | l | m | n |
+ * +-----------+---+---+---+---+---+---+---+
+ * 
+ * However to prevent parent 1 from always contributing to the first n genes
+ * and parent 2 to the remaining n-l, their sequence is randomly (should be 50/50)
+ * selected so with the same crossover point at 3, this can also happen
+ * +-----------+---+---+---+---+---+---+---+
+ * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+ * |-----------|---|---|---|---|---|---|---|
+ * | parent 1  |   |   |   |   | e | f | g |
+ * | parent 2  | h | i | j | k |   |   |   |
+ * +-----------+---+---+---+---+---+---+---+
+ * | offspring | h | i | j | k | e | f | g |
+ * +-----------+---+---+---+---+---+---+---+
+ * 
+ * @param[in]  parent_1  first parent genome
+ * @param[in]  parent_2  second parent genome
+ * @param[out] offspring buffer to place offspring genome
+ * @param[in]  length    length of all genomes
+ * 
+ * @return char*         offspring genome
+ */
+char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length);
 
 #endif // GENETIC_ALGORITHM_H_

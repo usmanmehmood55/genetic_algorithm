@@ -1,6 +1,13 @@
 #include "genetic_algorithm.h"
 
-genome_t initialize_target(char * string)
+/**
+ * @brief Initialization of the target genome is slightly different
+ * as it already has allocated memory and does not need any mutation.
+ * 
+ * @param string 
+ * @return genome_t 
+ */
+genome_t target_genome_init(char * string)
 {
     return (genome_t)
     {
@@ -11,9 +18,10 @@ genome_t initialize_target(char * string)
 }
 
 /**
- * @brief Create a genome object
+ * @brief Creates a new genome object with allocated memory
+ * of the given size. The genome must be manually freed by
+ * genome_destroy() after it has been used.
  * 
- * @param genome string created form mutated genes
  * @param length length of genome
  */
 genome_t genome_create(uint16_t length)
@@ -34,6 +42,12 @@ genome_t genome_create(uint16_t length)
     return genome;
 }
 
+/**
+ * @brief Frees the gene memory allocated to the genome and resets
+ * its fitness and length
+ * 
+ * @param[out] p_genome pointer to genome
+ */
 void genome_destroy(genome_t * p_genome)
 {
     free(p_genome->genes);
@@ -153,34 +167,59 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
 }
 
 /**
+ * @brief Provides a mutated genome
+ * 
+ * @param genome       genome string to mutate
+ * @param length       length of genome
+ * @param max_mutation maximum possible genes to be mutated
+ * @param min_mutation minimum possible genes to be mutated
+ */
+void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_t min_mutation)
+{
+    uint16_t total_mutations = (uint16_t)random_in_pos_range(max_mutation, min_mutation);
+    for (uint16_t mutation = 0U; mutation < total_mutations; mutation++)
+    {
+        uint16_t random_gene_index = (uint16_t)random_in_pos_range(length - 1U, 0);
+        genome[random_gene_index] = get_mutated_gene();
+    }
+}
+
+/**
  * @brief Mating combines the genomes of two parents over a random crossover point,
- * and the sequence of parents for the crossover is randomly selected.
+ * while the sequence of parents for the crossover is randomly selected. After a
+ * crossover, a slight mutation is performed to avoid a local maxima from occuring.
  * 
  * @details
  * 
  * Take these two parents, of size 7:
+ * +-----------+---+---+---+---+---+---+---+
+ * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+ * |-----------|---|---|---|---|---|---|---|
+ * | parent 1  | a | b | c | d | e | f | g |
+ * | parent 2  | h | i | j | k | l | m | n |
+ * +-----------+---+---+---+---+---+---+---+
  * 
- * index     = 0, 1, 2, 3, 4, 5, 6
- * parent 1  = a, b, c, d, e, f, g
- * parent 2  = h, i, j, k, l, m, n
+ * If the random crossover point is 3, the resulting offspring will look like this
+ * +-----------+---+---+---+---+---+---+---+
+ * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+ * |-----------|---|---|---|---|---|---|---|
+ * | parent 1  | a | b | c | d |   |   |   |
+ * | parent 2  |   |   |   |   | l | m | n |
+ * +-----------+---+---+---+---+---+---+---+
+ * | offspring | a | b | c | d | l | m | n |
+ * +-----------+---+---+---+---+---+---+---+
  * 
- * random crossover point is 3
- * 
- * index     = 0, 1, 2, 3, 4, 5, 6
- * parent 1  = a, b, c, d,
- * parent 2  =             l, m, n
- * -------------------------------
- * offspring = a, b, c, d, l, m, n
- * 
- * However to prevent parent 1 from always contributing to the first few genes
- * and parent 2 to the remaining last, their sequence is randomly (should be 50/50)
+ * However to prevent parent 1 from always contributing to the first n genes
+ * and parent 2 to the remaining n-l, their sequence is randomly (should be 50/50)
  * selected so with the same crossover point at 3, this can also happen
- * 
- * index     = 0, 1, 2, 3, 4, 5, 6
- * parent 1  =             e, f, g
- * parent 2  = h, i, j, k,        
- * -------------------------------
- * offspring = h, i, j, k, e, f, g
+ * +-----------+---+---+---+---+---+---+---+
+ * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+ * |-----------|---|---|---|---|---|---|---|
+ * | parent 1  |   |   |   |   | e | f | g |
+ * | parent 2  | h | i | j | k |   |   |   |
+ * +-----------+---+---+---+---+---+---+---+
+ * | offspring | h | i | j | k | e | f | g |
+ * +-----------+---+---+---+---+---+---+---+
  * 
  * @param[in]  parent_1  first parent genome
  * @param[in]  parent_2  second parent genome
@@ -204,20 +243,3 @@ char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t
     return offspring;
 }
 
-/**
- * @brief Provides a mutated genome
- * 
- * @param genome       genome string to mutate
- * @param length       length of genome
- * @param max_mutation maximum possible genes to be mutated
- * @param min_mutation minimum possible genes to be mutated
- */
-void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_t min_mutation)
-{
-    uint16_t total_mutations = (uint16_t)random_in_pos_range(max_mutation, min_mutation);
-    for (uint16_t mutation = 0U; mutation < total_mutations; mutation++)
-    {
-        uint16_t random_gene_index = (uint16_t)random_in_pos_range(length - 1U, 0);
-        genome[random_gene_index] = get_mutated_gene();
-    }
-}
