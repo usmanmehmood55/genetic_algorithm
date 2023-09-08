@@ -66,8 +66,8 @@ in [`genetic_algorithm.h`](genetic_algorithm/genetic_algorithm.h).
 
 After initializing the target genome, two new parent genomes, and `n` number of 
 offspring genomes are initialized. Their genes are selected randomly from the gene 
-pool. This creation is done in the `genome_create()` function. The number of 
-offspring is currently hardcoded in the `OFFSPRING_COUNT` macro in 
+pool. This is done in the `genome_init()` function. The number of offspring is
+currently hardcoded in the `OFFSPRING_COUNT` macro in 
 [`main.c`](main.c).
 ```c
 genome_t parents[2]; 
@@ -83,7 +83,8 @@ for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
 
 ### Genome Mating
 
-The algorithm starts by mating the two parent genomes to create all the offspring genomes. 
+The algorithm starts by mating the two parent genomes to create all the offspring 
+genomes. 
 ```c
 for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
 {
@@ -154,9 +155,11 @@ The fitness of a genome is being calculated based on these parameters.
 
 Naturally, a heavy bias is given to genes that match with the target in order.
 
-Ideally a genome that EXACTLY matches the target should have a fitness score of 0 and the less it matches, the more negative its fitness should become. 
+Ideally a genome that EXACTLY matches the target should have a fitness score of 0 
+and the less it matches, the more negative its fitness should become. 
 
-Currently the fitness calculation is anything but optimized, but I want to keep it that way for ease of understanding and debugging.
+Currently the fitness calculation is anything but optimized, but I want to keep it 
+that way for ease of understanding and debugging.
 
 ### Survival of the Fittest
 
@@ -174,9 +177,12 @@ genome_copy(&parents[1], &offsprings[1]);
 
 ### Generational Evolution and Convergence
 
-As the algorithm iterates, the genomes closer to the target keep getting selected to be parents and the resulting offspring keep getting closer to the target with slight mutations every time to help them converge.
+As the algorithm iterates, the genomes closer to the target keep getting selected 
+to be parents and the resulting offspring keep getting closer to the target with 
+slight mutations every time to help them converge.
 
-Convergence is achieved when both parents have a fitness score of 0, i.e., they both match the target exactly.
+Convergence is achieved when both parents have a fitness score of 0, i.e., they 
+both match the target exactly.
 ```c
 if ((parents[0].fitness == 0) && (parents[1].fitness == 0))
 {
