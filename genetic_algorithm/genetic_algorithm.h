@@ -39,7 +39,7 @@ genome_t genome_target_init(char * string);
  * 
  * @return genome_t a new genome
  */
-genome_t genome_create(uint16_t length);
+genome_t genome_init(uint16_t length);
 
 /**
  * @brief Frees the gene memory allocated to the genome and resets

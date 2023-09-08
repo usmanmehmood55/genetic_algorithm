@@ -12,13 +12,11 @@
  */
 genome_t genome_target_init(char * string)
 {
-    int string_length = strnlen(string, UINT16_MAX);
-
     return (genome_t)
     {
         .genes   = string,
-        .length  = string_length,
-        .fitness = WORST_FITNESS(string_length),
+        .length  = strnlen(string, UINT16_MAX),
+        .fitness = 0,
     };
 }
 
@@ -31,7 +29,7 @@ genome_t genome_target_init(char * string)
  * 
  * @return genome_t a new genome
  */
-genome_t genome_create(uint16_t length)
+genome_t genome_init(uint16_t length)
 {
     genome_t genome =
     {

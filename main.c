@@ -25,13 +25,13 @@ int main(int argc, char ** argv)
     int target_size = target.length;
 
     genome_t parents[2]; 
-    parents[0] = genome_create(target_size);
-    parents[1] = genome_create(target_size);
+    parents[0] = genome_init(target_size);
+    parents[1] = genome_init(target_size);
 
     genome_t offsprings[OFFSPRING_COUNT];
     for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
     {
-        offsprings[i] = genome_create(target_size);
+        offsprings[i] = genome_init(target_size);
     }
 
     uint64_t iterations = 0;
