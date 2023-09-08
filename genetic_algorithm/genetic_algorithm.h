@@ -119,38 +119,6 @@ void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_
  * crossover, a slight mutation is performed to avoid a local maxima from occurring.
  * Fitness of the new offspring is then calculated, compared to the provided target.
  * 
- * @details
- * 
- * Take these two parents, of size 7:
- * +-----------+---+---+---+---+---+---+---+
- * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
- * |-----------|---|---|---|---|---|---|---|
- * | parent 1  | a | b | c | d | e | f | g |
- * | parent 2  | h | i | j | k | l | m | n |
- * +-----------+---+---+---+---+---+---+---+
- * 
- * If the random crossover point is 3, the resulting offspring will look like this
- * +-----------+---+---+---+---+---+---+---+
- * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
- * |-----------|---|---|---|---|---|---|---|
- * | parent 1  | a | b | c | d |   |   |   |
- * | parent 2  |   |   |   |   | l | m | n |
- * +-----------+---+---+---+---+---+---+---+
- * | offspring | a | b | c | d | l | m | n |
- * +-----------+---+---+---+---+---+---+---+
- * 
- * However to prevent parent 1 from always contributing to the first n genes
- * and parent 2 to the remaining n-l, their sequence is randomly (should be 50/50)
- * selected so with the same crossover point at 3, this can also happen
- * +-----------+---+---+---+---+---+---+---+
- * | index     | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
- * |-----------|---|---|---|---|---|---|---|
- * | parent 1  |   |   |   |   | e | f | g |
- * | parent 2  | h | i | j | k |   |   |   |
- * +-----------+---+---+---+---+---+---+---+
- * | offspring | h | i | j | k | e | f | g |
- * +-----------+---+---+---+---+---+---+---+
- * 
  * @param[in]  p_target    pointer to target
  * @param[in]  p_parent_1  pointer to parent 1
  * @param[in]  p_parent_2  pointer to parent 2
