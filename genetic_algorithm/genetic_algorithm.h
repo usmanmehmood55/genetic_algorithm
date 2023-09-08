@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define GENES "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define GENES "1234567890!@#$^&*()_-=,.;:'/\\\"{}[]<>?abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 typedef char gene_t;
 
@@ -59,12 +59,11 @@ void genome_destroy(genome_t * p_genome);
 void genome_copy(genome_t * destination, const genome_t * source);
 
 /**
- * @brief Function for printing the genomes in a readable format
+ * @brief Function for printing genomes in a readable format
  * 
- * @param[in] genome_1 first genome string
- * @param[in] genome_2 second genome string
+ * @param[in] genome
  */
-void genomes_print(const genome_t genome_1, const genome_t genome_2);
+void genome_print(const genome_t genome);
 
 /**
  * @brief Provides a pseudo random number between a positive range

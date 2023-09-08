@@ -80,22 +80,14 @@ void genome_copy(genome_t * destination, const genome_t * source)
  * @param[in] genome_1 first genome string
  * @param[in] genome_2 second genome string
  */
-void genomes_print(const genome_t genome_1, const genome_t genome_2)
+void genome_print(const genome_t genome)
 {
-    (void)printf("\rGenome 1: \"");
-    for (uint16_t gene = 0; gene < genome_1.length; gene++)
+    (void)printf("\r(%3d) : \"", genome.fitness);
+    for (uint16_t gene = 0; gene < genome.length; gene++)
     {
-        (void)printf("%c", genome_1.genes[gene]);
+        (void)printf("%c", genome.genes[gene]);
     }
-    (void)printf("\" (%3d)", genome_1.fitness);
-
-    (void)printf("\tGenome 2: \"");
-    for (uint16_t gene = 0; gene < genome_2.length; gene++)
-    {
-        (void)printf("%c", genome_2.genes[gene]);
-    }
-    (void)printf("\" (%3d)", genome_2.fitness);
-    (void)printf("\n");
+    (void)printf("\"\n");
 }
 
 /**
