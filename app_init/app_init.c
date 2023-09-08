@@ -1,5 +1,12 @@
 #include "app_init.h"
 
+/** 
+ * @brief Validate that all characters in the given string are in the GENE_POOL
+ * 
+ * @param str The string to validate
+ * 
+ * @return true if all characters in the string are in the GENE_POOL, false otherwise
+ */
 static bool validate_target_string(const char *str)
 {
     uint16_t str_len = strnlen(str, UINT16_MAX);
@@ -15,6 +22,22 @@ static bool validate_target_string(const char *str)
     return true;
 }
 
+/**
+ * @brief Processes the given arguments to fill the target genome and offspring count
+ * 
+ * @details This function performs the following steps:
+ * - Validates that the correct number of command line arguments are passed
+ * - Validates that the target string contains only characters from the GENE_POOL
+ * - Validates that the offspring count is within the allowed range
+ * - Initializes the random number generator
+ * 
+ * @param[in]     argc              Number of command line arguments
+ * @param[in,out] argv              Array of command line arguments
+ * @param[out]    p_target          Pointer to the genome_t structure to initialize with the target string
+ * @param[out]    p_offspring_count Pointer to a uint16_t to store the offspring count
+ * 
+ * @return true on successful initialization, false otherwise
+ */
 bool app_init(int argc, char ** argv, genome_t * p_target, uint16_t * p_offspring_count)
 {
     if (argc < 3)
