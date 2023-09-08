@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "genetic_algorithm.h"
 
-#define OFFSPRING_COUNT 10000U
+#define OFFSPRING_COUNT 500U
 
 /**
  * @brief This is a very crude implementation of a genetic algorithm. 
@@ -15,6 +15,7 @@ int main(int argc, char ** argv)
 {
     if (argc < 2)
     {
+        (void)printf("\rInvalid args\n");
         return -EINVAL;
     }
 
@@ -24,11 +25,9 @@ int main(int argc, char ** argv)
     const genome_t target = target_genome_init(argv[1]);
     int target_size = target.length;
 
-    genome_t parents[2] = 
-    {
-        genome_create(target_size),
-        genome_create(target_size),
-    };
+    genome_t parents[2]; 
+    parents[0] = genome_create(target_size);
+    parents[1] = genome_create(target_size);
 
     genome_t offsprings[OFFSPRING_COUNT];
     for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
@@ -68,23 +67,15 @@ int main(int argc, char ** argv)
             }
         }
 
-        // only here for ease of debugging
-        int fitness_[OFFSPRING_COUNT];
-        for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
-        {
-            fitness_[i] = offsprings[i].fitness;
-        }
-
         // offsprings become parents
-        parents[0] = offsprings[0];
-        parents[1] = offsprings[1];
+        genome_copy(&parents[0], &offsprings[0]);
+        genome_copy(&parents[1], &offsprings[1]);
         print_genomes(parents[0], parents[1]);
 
         // break, if convergence
-        if ((fitness_score(target.genes, parents[0].genes, target_size) == 0) || (fitness_score(target.genes, parents[1].genes, target_size) == 0))
+        if ((fitness_score(target.genes, parents[0].genes, target_size) == 0) && (fitness_score(target.genes, parents[1].genes, target_size) == 0))
         {
             (void)printf("\rConvergence Achieved!\n");
-            (void)printf("%d", fitness_[0]);
             break;
         }
 
