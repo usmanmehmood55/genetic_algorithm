@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define GENE_POOL "!@#$^&*()_-=,.;:'/\\\"{}[]<>? 1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define GENE_POOL "!@#$^&*()_-=+,.;:'/\\\"{}[]<>? 1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 typedef char gene_t;
 

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "genetic_algorithm.h"
+#include "app_init.h"
 
 /**
  * @brief This is a very crude implementation of a genetic algorithm. 
@@ -12,19 +13,10 @@
  */
 int main(int argc, char ** argv)
 {
-    if (argc < 3)
-    {
-        (void)printf("\rInvalid args.\n");
-        (void)printf("\rExpected: \"<target string>\" <offspring count>\n");
-        (void)printf("\rExample:  ./genetic_algorithm.exe \"This is my target\" 500\n");
-        return -EINVAL;
-    }
-    (void)printf("\r\n");
-
-    const uint16_t offspring_count = (uint16_t)atoi(argv[2]);
-    const genome_t target = genome_target_init(argv[1]);
-
-    srand(time(NULL)); // required for random number generation
+    uint16_t offspring_count;
+    genome_t target;
+    bool is_args_valid = app_init(argc, argv, &target, &offspring_count);
+    if (is_args_valid == false) { return -EINVAL; }
 
     genome_t parents[2];
     parents[0] = genome_init(target.length);
@@ -57,7 +49,6 @@ int main(int argc, char ** argv)
         // break, if convergence
         if ((parents[0].fitness == 0) || (iterations == UINT64_MAX))
         {
-            (void)printf("\r\nConvergence Achieved!\n");
             break;
         }
 
@@ -67,6 +58,7 @@ int main(int argc, char ** argv)
     clock_t end_time = clock();
     clock_t time_taken = (end_time - start_time) * (clock_t)((double)1000.0 / (double)CLOCKS_PER_SEC); // In seconds
 
+    (void)printf("\r\nConvergence Achieved!\n");
     (void)printf("\rNumber of Iterations: %llu\n", iterations);
     (void)printf("\rTime taken: %lu milliseconds\n", time_taken);
 

@@ -13,5 +13,6 @@ add_executable(${PROJECT_NAME} main.c)
 
 # Add library subdirectory
 add_subdirectory(genetic_algorithm)
+add_subdirectory(app_init)
 
 target_link_libraries(${PROJECT_NAME} gcov)
