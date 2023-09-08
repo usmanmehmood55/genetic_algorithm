@@ -36,8 +36,12 @@ string of character/integer/float/bits. This string is analogous to the Chromoso
 
 ## My Implementation
 
-A singular gene, is represented as a character. A genome being a collection of 
-genes, is represented as this structure.
+A singular gene, is represented as a character. 
+```c
+typedef char gene_t;
+```
+
+A genome being a collection of genes, is represented as this structure.
 ```c
 typedef struct genome_t
 {
@@ -61,7 +65,7 @@ in [`genetic_algorithm.h`](genetic_algorithm/genetic_algorithm.h).
 ### Genome Initializations
 
 After initializing the target genome, two new parent genomes, and `n` number of 
-offspring genomes are initialized. There genes are selected randomly from the gene 
+offspring genomes are initialized. Their genes are selected randomly from the gene 
 pool. This creation is done in the `genome_create()` function. The number of 
 offspring is currently hardcoded in the `OFFSPRING_COUNT` macro in 
 [`main.c`](main.c).
@@ -146,7 +150,8 @@ maxima.
 The fitness of a genome is being calculated based on these parameters.
 1. How many genes in this are also present in the target, regardless of the order.
 2. How many genes in this are NOT present in the target.
-3. How many genes match the target, in order.
+3. How many genes match the target exactly in order.
+
 Naturally, a heavy bias is given to genes that match with the target in order.
 
 Ideally a genome that EXACTLY matches the target should have a fitness score of 0 and the less it matches, the more negative its fitness should become. 
@@ -156,8 +161,8 @@ Currently the fitness calculation is anything but optimized, but I want to keep 
 ### Survival of the Fittest
 
 After creating an `n` number of offspring, they are sorted by ascending fitness. 
-This is done using the `genomes_sort_by_fitness()` function. Currently the sorting 
-is being done using a bubble sort.
+This is done using the `genomes_sort_by_fitness()` function which performs a bubble 
+sort.
 
 The two fittest offspring are then declared as the new parents, by copying them to 
 the parent genomes using the `genome_copy()` function which performs a deep copy to 
@@ -196,7 +201,8 @@ leading to less in number, but more time consuming iterations.
 ## Sample Output
 
 ```bash
-genetic_algorithm> .\build\genetic_algorithm.exe "Hi my name is Usman"
+genetic_algorithm> ./build/genetic_algorithm.exe "Hi my name is Usman"
+
 Genome 1: "AYrtsIOTqhGNPLMnqIH" (-35)   Genome 2: "tirtAIOTqhGNPLMnqIO" (-35)
 Genome 1: "tirtsIOTqmGNPLMnqIH" (-32)   Genome 2: "tirtsyOTqhGNPLMnqIH" (-32)
 Genome 1: "tirtsyOTqmGNPLsnqIH" (-30)   Genome 2: "mirtsyOTqmGNPLMnqIH" (-30)
