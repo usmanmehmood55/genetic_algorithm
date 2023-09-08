@@ -266,5 +266,5 @@ ninja -C build
 
 To run the test application
 ```bash
-./build/ring_buffer.exe
+./build/genetic_algorithm.exe
 ```
