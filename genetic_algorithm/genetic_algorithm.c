@@ -1,5 +1,7 @@
 #include "genetic_algorithm.h"
 
+#define WORST_FITNESS(length) (int)((int)length * -2)
+
 /**
  * @brief Initialization of the target genome is slightly different
  * as it already has allocated memory and does not need any mutation.
@@ -9,11 +11,13 @@
  */
 genome_t target_genome_init(char * string)
 {
+    int string_length = strnlen(string, UINT16_MAX);
+
     return (genome_t)
     {
         .genes   = string,
-        .length  = strnlen(string, UINT16_MAX),
-        .fitness = 0,
+        .length  = string_length,
+        .fitness = WORST_FITNESS(string_length),
     };
 }
 
@@ -30,7 +34,7 @@ genome_t genome_create(uint16_t length)
     {
         .genes   = calloc(length, sizeof(gene_t)),
         .length  = length,
-        .fitness = ((int)length * -3)
+        .fitness = WORST_FITNESS(length),
     };
 
     for (uint16_t this_gene = 0; this_gene < length; this_gene++)
@@ -53,6 +57,20 @@ void genome_destroy(genome_t * p_genome)
     free(p_genome->genes);
     p_genome->fitness = 0;
     p_genome->length  = 0;
+}
+
+/**
+ * @brief Performs a deep copy of source to destination while
+ * maintaining their original references
+ * 
+ * @param destination 
+ * @param source 
+ */
+void genome_copy(genome_t * destination, genome_t * source)
+{
+    destination->fitness = source->fitness;
+    destination->length = source->length;
+    (void)memcpy(destination->genes, source->genes, source->length);
 }
 
 /**
@@ -255,7 +273,7 @@ char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t
     (void)memcpy(offspring + crossover_point, (flip_sequence ? parent_2 : parent_1) + crossover_point, length - crossover_point);
 
     // Perform mutation on 1 gene with a 50/50 chance
-    mutate_genome(offspring, length, 3U, 0U);
+    mutate_genome(offspring, length, 1U, 0U);
 
     return offspring;
 }

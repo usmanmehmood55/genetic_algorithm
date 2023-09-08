@@ -47,6 +47,15 @@ genome_t genome_create(uint16_t length);
 void genome_destroy(genome_t * p_genome);
 
 /**
+ * @brief Performs a deep copy of source to destination while
+ * maintaining their original references
+ * 
+ * @param destination 
+ * @param source 
+ */
+void genome_copy(genome_t * destination, genome_t * source);
+
+/**
  * @brief Function for printing the genomes in a readable format
  * 
  * @param genome_1 first genome string
