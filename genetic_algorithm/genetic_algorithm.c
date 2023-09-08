@@ -6,10 +6,11 @@
  * @brief Initialization of the target genome is slightly different
  * as it already has allocated memory and does not need any mutation.
  * 
- * @param string 
- * @return genome_t 
+ * @param[in,out] string target string
+ * 
+ * @return genome_t initialized target
  */
-genome_t target_genome_init(char * string)
+genome_t genome_target_init(char * string)
 {
     int string_length = strnlen(string, UINT16_MAX);
 
@@ -26,7 +27,9 @@ genome_t target_genome_init(char * string)
  * of the given size. The genome must be manually freed by
  * genome_destroy() after it has been used.
  * 
- * @param length length of genome
+ * @param[in] length length of genome
+ * 
+ * @return genome_t a new genome
  */
 genome_t genome_create(uint16_t length)
 {
@@ -63,10 +66,10 @@ void genome_destroy(genome_t * p_genome)
  * @brief Performs a deep copy of source to destination while
  * maintaining their original references
  * 
- * @param destination 
- * @param source 
+ * @param[out] destination 
+ * @param[in]  source 
  */
-void genome_copy(genome_t * destination, genome_t * source)
+void genome_copy(genome_t * destination, const genome_t * source)
 {
     destination->fitness = source->fitness;
     destination->length = source->length;
@@ -76,10 +79,10 @@ void genome_copy(genome_t * destination, genome_t * source)
 /**
  * @brief Function for printing the genomes in a readable format
  * 
- * @param genome_1 first genome string
- * @param genome_2 second genome string
+ * @param[in] genome_1 first genome string
+ * @param[in] genome_2 second genome string
  */
-void print_genomes(genome_t genome_1, genome_t genome_2)
+void genomes_print(const genome_t genome_1, const genome_t genome_2)
 {
     (void)printf("\rGenome 1: \"");
     for (uint16_t gene = 0; gene < genome_1.length; gene++)
@@ -100,12 +103,12 @@ void print_genomes(genome_t genome_1, genome_t genome_2)
 /**
  * @brief Provides a pseudo random number between a positive range
  * 
- * @param upper_limit upper limit number
- * @param lower_limit lower limit number
+ * @param[in] upper_limit upper limit number
+ * @param[in] lower_limit lower limit number
  * 
- * @return int        pseudo-random number, -ERANGE if upper limit is invalid, -EINVAL if limits are negative
+ * @return int pseudo-random number, -ERANGE if upper limit is invalid, -EINVAL if limits are negative
  */
-int random_in_pos_range(int upper_limit, int lower_limit)
+int random_in_pos_range(const int upper_limit, const int lower_limit)
 {
     int result = 0;
 
@@ -141,13 +144,13 @@ char get_mutated_gene(void)
 /**
  * @brief Calculates fitness of the genome based on how close it is to the target
  * 
- * @param target target genome string
- * @param genome input genome string for which fitness has to be calculated
- * @param length length of both genomes
+ * @param[in] target target genome string
+ * @param[in] genome input genome string for which fitness has to be calculated
+ * @param[in] length length of both genomes
  * 
- * @return int   fitness score
+ * @return int fitness score
  */
-int fitness_score(const char *target, const char *genome, uint16_t length)
+int genome_calculate_fitness(const char *target, const char *genome, uint16_t length)
 {
     int total_score = 0;
 
@@ -202,12 +205,35 @@ int fitness_score(const char *target, const char *genome, uint16_t length)
 }
 
 /**
- * @brief Provides a mutated genome
+ * @brief Sorts the given genome array by ascending fitness
  * 
- * @param genome       genome string to mutate
- * @param length       length of genome
- * @param max_mutation maximum possible genes to be mutated
- * @param min_mutation minimum possible genes to be mutated
+ * @param[in,out] genomes      array of genomes
+ * @param[in]     genome_count number of genomes in the array
+ */
+void genomes_sort_by_fitness(genome_t genomes[], uint16_t genome_count)
+{
+    for (uint16_t i = 0U; i < genome_count; i++)
+    {
+        for (uint16_t j = (i + 1U); j < genome_count; j++)
+        {
+            if (genomes[j].fitness > genomes[i].fitness)
+            {
+                genome_t temp = genomes[i];
+                genomes[i] = genomes[j];
+                genomes[j] = temp;
+            }
+        }
+    }
+}
+
+/**
+ * @brief Provides a mutated genome based on the maximum and minimum possible
+ * mutations.
+ * 
+ * @param[in,out] genome       genome string to mutate
+ * @param[in]     length       length of genome
+ * @param[in]     max_mutation maximum possible genes to be mutated
+ * @param[in]     min_mutation minimum possible genes to be mutated
  */
 void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_t min_mutation)
 {
@@ -222,7 +248,8 @@ void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_
 /**
  * @brief Mating combines the genomes of two parents over a random crossover point,
  * while the sequence of parents for the crossover is randomly selected. After a
- * crossover, a slight mutation is performed to avoid a local maxima from occuring.
+ * crossover, a slight mutation is performed to avoid a local maxima from occurring.
+ * Fitness of the new offspring is then calculated, compared to the provided target.
  * 
  * @details
  * 
@@ -256,25 +283,24 @@ void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_
  * | offspring | h | i | j | k | e | f | g |
  * +-----------+---+---+---+---+---+---+---+
  * 
- * @param[in]  parent_1  first parent genome
- * @param[in]  parent_2  second parent genome
- * @param[out] offspring buffer to place offspring genome
- * @param[in]  length    length of all genomes
- * 
- * @return char*         offspring genome
+ * @param[in]  p_target    pointer to target
+ * @param[in]  p_parent_1  pointer to parent 1
+ * @param[in]  p_parent_2  pointer to parent 2
+ * @param[out] p_offspring buffer to store offspring genome in
  */
-char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length)
+void genomes_mate(const genome_t * p_target, const genome_t * p_parent_1, const genome_t * p_parent_2, genome_t * p_offspring)
 {
+    uint16_t length          = p_target->length;
     uint16_t crossover_point = (uint16_t)random_in_pos_range((length - 1U), 0);
-    bool flip_sequence = (bool)random_in_pos_range(1, 0);
+    bool     flip_sequence   = (bool)random_in_pos_range(1, 0);
 
     // Perform single-point crossover
-    (void)memcpy(offspring, flip_sequence ? parent_1 : parent_2, crossover_point);
-    (void)memcpy(offspring + crossover_point, (flip_sequence ? parent_2 : parent_1) + crossover_point, length - crossover_point);
+    (void)memcpy(p_offspring->genes, flip_sequence ? p_parent_1->genes : p_parent_2->genes, crossover_point);
+    (void)memcpy(p_offspring->genes + crossover_point, (flip_sequence ? p_parent_2->genes : p_parent_1->genes) + crossover_point, length - crossover_point);
 
     // Perform mutation on 1 gene with a 50/50 chance
-    mutate_genome(offspring, length, 1U, 0U);
+    mutate_genome(p_offspring->genes, length, 1U, 0U);
 
-    return offspring;
+    // calculate fitness of the new offspring
+    p_offspring->fitness = genome_calculate_fitness(p_target->genes, p_offspring->genes, length);
 }
-

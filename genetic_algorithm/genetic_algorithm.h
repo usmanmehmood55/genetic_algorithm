@@ -24,17 +24,20 @@ typedef struct genome_t
  * @brief Initialization of the target genome is slightly different
  * as it already has allocated memory and does not need any mutation.
  * 
- * @param string 
- * @return genome_t 
+ * @param[in,out] string target string
+ * 
+ * @return genome_t initialized target
  */
-genome_t target_genome_init(char * string);
+genome_t genome_target_init(char * string);
 
 /**
  * @brief Creates a new genome object with allocated memory
  * of the given size. The genome must be manually freed by
  * genome_destroy() after it has been used.
  * 
- * @param length length of genome
+ * @param[in] length length of genome
+ * 
+ * @return genome_t a new genome
  */
 genome_t genome_create(uint16_t length);
 
@@ -50,28 +53,28 @@ void genome_destroy(genome_t * p_genome);
  * @brief Performs a deep copy of source to destination while
  * maintaining their original references
  * 
- * @param destination 
- * @param source 
+ * @param[out] destination 
+ * @param[in]  source 
  */
-void genome_copy(genome_t * destination, genome_t * source);
+void genome_copy(genome_t * destination, const genome_t * source);
 
 /**
  * @brief Function for printing the genomes in a readable format
  * 
- * @param genome_1 first genome string
- * @param genome_2 second genome string
+ * @param[in] genome_1 first genome string
+ * @param[in] genome_2 second genome string
  */
-void print_genomes(genome_t genome_1, genome_t genome_2);
+void genomes_print(const genome_t genome_1, const genome_t genome_2);
 
 /**
  * @brief Provides a pseudo random number between a positive range
  * 
- * @param upper_limit upper limit number
- * @param lower_limit lower limit number
+ * @param[in] upper_limit upper limit number
+ * @param[in] lower_limit lower limit number
  * 
- * @return int        pseudo-random number, -ERANGE if upper limit is invalid, -EINVAL if limits are negative
+ * @return int pseudo-random number, -ERANGE if upper limit is invalid, -EINVAL if limits are negative
  */
-int random_in_pos_range(int upper_limit, int lower_limit);
+int random_in_pos_range(const int upper_limit, const int lower_limit);
 
 /**
  * @brief Function for extracting a mutated / random gene from the available gene pool.
@@ -83,28 +86,38 @@ char get_mutated_gene(void);
 /**
  * @brief Calculates fitness of the genome based on how close it is to the target
  * 
- * @param target target genome string
- * @param genome input genome string for which fitness has to be calculated
- * @param length length of both genomes
+ * @param[in] target target genome string
+ * @param[in] genome input genome string for which fitness has to be calculated
+ * @param[in] length length of both genomes
  * 
- * @return int   fitness score
+ * @return int fitness score
  */
-int fitness_score(const char *target, const char *genome, uint16_t length);
+int genome_calculate_fitness(const char *target, const char *genome, uint16_t length);
 
 /**
- * @brief Provides a mutated genome
+ * @brief Sorts the given genome array by ascending fitness
  * 
- * @param genome       genome string to mutate
- * @param length       length of genome
- * @param max_mutation maximum possible genes to be mutated
- * @param min_mutation minimum possible genes to be mutated
+ * @param[in,out] genomes      array of genomes
+ * @param[in]     genome_count number of genomes in the array
+ */
+void genomes_sort_by_fitness(genome_t genomes[], uint16_t genome_count);
+
+/**
+ * @brief Provides a mutated genome based on the maximum and minimum possible
+ * mutations.
+ * 
+ * @param[in,out] genome       genome string to mutate
+ * @param[in]     length       length of genome
+ * @param[in]     max_mutation maximum possible genes to be mutated
+ * @param[in]     min_mutation minimum possible genes to be mutated
  */
 void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_t min_mutation);
 
 /**
  * @brief Mating combines the genomes of two parents over a random crossover point,
  * while the sequence of parents for the crossover is randomly selected. After a
- * crossover, a slight mutation is performed to avoid a local maxima from occuring.
+ * crossover, a slight mutation is performed to avoid a local maxima from occurring.
+ * Fitness of the new offspring is then calculated, compared to the provided target.
  * 
  * @details
  * 
@@ -138,13 +151,11 @@ void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_
  * | offspring | h | i | j | k | e | f | g |
  * +-----------+---+---+---+---+---+---+---+
  * 
- * @param[in]  parent_1  first parent genome
- * @param[in]  parent_2  second parent genome
- * @param[out] offspring buffer to place offspring genome
- * @param[in]  length    length of all genomes
- * 
- * @return char*         offspring genome
+ * @param[in]  p_target    pointer to target
+ * @param[in]  p_parent_1  pointer to parent 1
+ * @param[in]  p_parent_2  pointer to parent 2
+ * @param[out] p_offspring buffer to store offspring genome in
  */
-char *mate(const char *parent_1, const char *parent_2, char *offspring, uint16_t length);
+void genomes_mate(const genome_t * p_target, const genome_t * p_parent_1, const genome_t * p_parent_2, genome_t * p_offspring);
 
 #endif // GENETIC_ALGORITHM_H_

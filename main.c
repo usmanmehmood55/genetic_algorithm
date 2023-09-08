@@ -19,10 +19,9 @@ int main(int argc, char ** argv)
         return -EINVAL;
     }
 
-    // required for random number generation
-    srand(time(NULL));
+    srand(time(NULL)); // required for random number generation
 
-    const genome_t target = target_genome_init(argv[1]);
+    const genome_t target = genome_target_init(argv[1]);
     int target_size = target.length;
 
     genome_t parents[2]; 
@@ -41,39 +40,18 @@ int main(int argc, char ** argv)
         // create offsprings
         for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
         {
-            offsprings[i].genes = mate(parents[0].genes, parents[1].genes, offsprings[i].genes, target_size);
+            genomes_mate(&target, &parents[0], &parents[1], &offsprings[i]);
         }
 
-        // calculate fitness of offsprings
-        for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
-        {
-            offsprings[i].fitness = fitness_score(target.genes, offsprings[i].genes, offsprings[i].length);
-        }
+        genomes_sort_by_fitness(offsprings, OFFSPRING_COUNT);
 
-        // Sort offsprings by fitness, higher is better
-        // This will be made into a separate function
-        {
-            for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
-            {
-                for (uint16_t j = (i + 1U); j < OFFSPRING_COUNT; j++)
-                {
-                    if (offsprings[j].fitness > offsprings[i].fitness)
-                    {
-                        genome_t temp = offsprings[i];
-                        offsprings[i] = offsprings[j];
-                        offsprings[j] = temp;
-                    }
-                }
-            }
-        }
-
-        // offsprings become parents
+        // healthiest two offsprings become parents
         genome_copy(&parents[0], &offsprings[0]);
         genome_copy(&parents[1], &offsprings[1]);
-        print_genomes(parents[0], parents[1]);
+        genomes_print(parents[0], parents[1]);
 
         // break, if convergence
-        if ((fitness_score(target.genes, parents[0].genes, target_size) == 0) && (fitness_score(target.genes, parents[1].genes, target_size) == 0))
+        if ((parents[0].fitness == 0) && (parents[1].fitness == 0))
         {
             (void)printf("\rConvergence Achieved!\n");
             break;
@@ -84,9 +62,9 @@ int main(int argc, char ** argv)
 
     (void)printf("\rNumber of Iterations: %llu\n", iterations);
 
+    // cleanup memory
     genome_destroy(&parents[0]);
     genome_destroy(&parents[1]);
-
     for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
     {
         genome_destroy(&offsprings[i]);
