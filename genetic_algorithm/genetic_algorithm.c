@@ -128,7 +128,7 @@ int random_in_pos_range(const int upper_limit, const int lower_limit)
  */
 char get_mutated_gene(void)
 {
-    return GENES[random_in_pos_range((sizeof(GENES) - 1U), 0)];
+    return GENE_POOL[random_in_pos_range((sizeof(GENE_POOL) - 1U), 0)];
 }
 
 /**

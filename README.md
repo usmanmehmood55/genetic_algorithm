@@ -51,33 +51,28 @@ typedef struct genome_t
 } genome_t;
 ```
 
-The application expects a string argument that it takes as its target. The string 
-must only be small alphabets, capital alphabets, and spaces. As of now, the gene 
-pool, `GENES`, is limited to these character types.
-
-Although ANY unicode character can be added to the gene pool, limiting them 
-simplifies the process and reduces the calculation times. The gene pool is defined 
-in [`genetic_algorithm.h`](genetic_algorithm/genetic_algorithm.h).
+The application expects a string argument that it takes as its target, and the 
+number of offspring to generate. The string must only contain the characters 
+present in the gene pool, which is is defined in 
+[`genetic_algorithm.h`](genetic_algorithm/genetic_algorithm.h).
 ```c
-#define GENES "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define GENE_POOL "!@#$^&*()_-=,.;:'/\\\"{}[]<>? 1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 ```
 
 ### Genome Initializations
 
 After initializing the target genome, two new parent genomes, and `n` number of 
 offspring genomes are initialized. Their genes are selected randomly from the gene 
-pool. This is done in the `genome_init()` function. The number of offspring is
-currently hardcoded in the `OFFSPRING_COUNT` macro in 
-[`main.c`](main.c).
+pool. This is done in the `genome_init()` function. 
 ```c
-genome_t parents[2]; 
-parents[0] = genome_init(target_size);
-parents[1] = genome_init(target_size);
+genome_t parents[2];
+parents[0] = genome_init(target.length);
+parents[1] = genome_init(target.length);
 
-genome_t offsprings[OFFSPRING_COUNT];
-for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
+genome_t offsprings[offspring_count];
+for (uint16_t i = 0U; i < offspring_count; i++)
 {
-    offsprings[i] = genome_init(target_size);
+    offsprings[i] = genome_init(target.length);
 }
 ```
 
@@ -86,7 +81,7 @@ for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
 The algorithm starts by mating the two parent genomes to create all the offspring 
 genomes. 
 ```c
-for (uint16_t i = 0U; i < OFFSPRING_COUNT; i++)
+for (uint16_t i = 0U; i < offspring_count; i++)
 {
     genomes_mate(&target, &parents[0], &parents[1], &offsprings[i]);
 }
@@ -181,10 +176,11 @@ As the algorithm iterates, the genomes closer to the target keep getting selecte
 to be parents and the resulting offspring keep getting closer to the target with 
 slight mutations every time to help them converge.
 
-Convergence is achieved when both parents have a fitness score of 0, i.e., they 
-both match the target exactly.
+Convergence is achieved when the healthiest parent has a fitness score of 0, i.e., 
+it matches the target exactly. There is also an upper bound to number of iterations 
+in case the algorithm never converges.
 ```c
-if ((parents[0].fitness == 0) && (parents[1].fitness == 0))
+if ((parents[0].fitness == 0) || (iterations == UINT64_MAX))
 {
     (void)printf("\rConvergence Achieved!\n");
     break;
@@ -207,37 +203,39 @@ leading to less in number, but more time consuming iterations.
 ## Sample Output
 
 ```bash
-genetic_algorithm> ./build/genetic_algorithm.exe "Hi my name is Usman"
+genetic_algorithm> ./build/genetic_algorithm.exe "Hi, my name is Usman. :)" 1000
 
-Genome 1: "AYrtsIOTqhGNPLMnqIH" (-35)   Genome 2: "tirtAIOTqhGNPLMnqIO" (-35)
-Genome 1: "tirtsIOTqmGNPLMnqIH" (-32)   Genome 2: "tirtsyOTqhGNPLMnqIH" (-32)
-Genome 1: "tirtsyOTqmGNPLsnqIH" (-30)   Genome 2: "mirtsyOTqmGNPLMnqIH" (-30)
-Genome 1: "mirtsyOTqm NPLsnqIH" (-27)   Genome 2: "mirisyOTqmGNPLsnqIH" (-28)
-Genome 1: "mirisyOTqm NHLsnqIH" (-25)   Genome 2: "mirisyOTqm HPLsnqIH" (-25)
-Genome 1: "mirisyOTqm NHLsnqaH" (-23)   Genome 2: "mirisyOTqm HsLsnqIH" (-23)
-Genome 1: "mirisyOTqm HsisnqaH" (-20)   Genome 2: "mirisyOTem HsLsnqaH" (-20)
-Genome 1: "mirisyOTem HsisnqaH" (-19)   Genome 2: "mirisyOTem HsisnqaH" (-19)
-Genome 1: "mirisyOaem HsisnqaH" (-17)   Genome 2: "mirisyeTem HsisnqaH" (-18)
-Genome 1: "miKisyeaem HsisnqaH" (-16)   Genome 2: "mirisyOaem HsisneaH" (-16)
-Genome 1: "miKisyeaem HsisneaH" (-15)   Genome 2: "miKisyeaem HsisneaH" (-15)
-Genome 1: "mimisyeaem HsisneaH" (-14)   Genome 2: "HiKisyeaem HsisneaH" (-14)
-Genome 1: "Himisyeaem HsisneaH" (-13)   Genome 2: "Himisyeaem HsisneaH" (-13)
-Genome 1: "Himiyyeaem HsisneaH" (-12)   Genome 2: "Hi isyeaem HsisneaH" (-12)
-Genome 1: "Hi iyyeaem HsisneaH" (-11)   Genome 2: "Himiyyeaem HsisnmaH" (-11)
-Genome 1: "Hi iyyeaem HsisnmaH" (-10)   Genome 2: "Hi iyyeaem HsisnmaH" (-10)
-Genome 1: "Hi iyyeaem Hs snmaH" ( -9)   Genome 2: "Hi iyyeaem HsiUnmaH" ( -9)
-Genome 1: "Hi iyyeaem Hs UnmaH" ( -8)   Genome 2: "Hi iyyeaem Hs UnmaH" ( -8)
-Genome 1: "Hi iy eaem Hs UnmaH" ( -7)   Genome 2: "Hi iyyeamm Hs UnmaH" ( -7)
-Genome 1: "Hi iyyeamm Hs Unman" ( -6)   Genome 2: "Hi iy eamm Hs UnmaH" ( -6)
-Genome 1: "Hi iy eamm is Unman" ( -4)   Genome 2: "Hi iy eame Hs Unman" ( -4)
-Genome 1: "Hi iy eame is Unman" ( -3)   Genome 2: "Hi iy eame is Unman" ( -3)
-Genome 1: "Hi my eame is Unman" ( -2)   Genome 2: "Hi iy eame is Unman" ( -3)
-Genome 1: "Hi my eame is Unman" ( -2)   Genome 2: "Hi my eame is Unman" ( -2)
-Genome 1: "Hi my eame is Unman" ( -2)   Genome 2: "Hi my eame is Unman" ( -2)
-Genome 1: "Hi my eame is Unman" ( -2)   Genome 2: "Hi my eame is Unman" ( -2)
-Genome 1: "Hi my eame is Usman" ( -1)   Genome 2: "Hi my eame is Usman" ( -1)
-Genome 1: "Hi my name is Usman" (  0)   Genome 2: "Hi my eame is Usman" ( -1)
-Genome 1: "Hi my name is Usman" (  0)   Genome 2: "Hi my name is Usman" (  0)
+(-40) : "zQ2y*q eYxa-XxN01GmmCNkm"
+(-37) : "zQ2ym. eYxa-XxN01GmmCNkm"
+(-33) : "zQ2ym. eYxa-XxN0sGmmC km"
+(-30) : "zQ2ym. e)xa-XxNUsGmmC km"
+(-28) : "zQ2ym. e)xa-syNUsGmmC km"
+(-25) : "zQ2ym. e)xa syyUsGmmC km"
+(-22) : "HQ2ym. e)xa syyUsGmnC km"
+(-18) : "HQ2ym. e)xa syyUsGmn. :m"
+(-17) : "HQUym. e)xa syyUsGmn. :m"
+(-15) : "H.Uym. e)xa syyUs.mn. :m"
+(-13) : "H.Uym. e)sa syyUs.an. :m"
+(-11) : "H.Uym. e)sa ss Us.an. :m"
+(-11) : "H.Uym. e)sa ss Us.an. :m"
+(-10) : "H.Uym. e)sa is Us.an. :m"
+( -9) : "H.U m. e)sa is Us.an. :m"
+( -8) : "H.U m. easa is Us.an. :m"
+( -7) : "H.U m. ease is Us.an. :m"
+( -7) : "H.U m. ease is Us.an. :m"
+( -7) : "H.U m. ease is Us.an. :m"
+( -6) : "H.U m. ease is Usman. :m"
+( -5) : "H.U m. eame is Usman. :m"
+( -5) : "H.U m. eame is Usman. :m"
+( -4) : "H.U m. eame is Usman. :)"
+( -3) : "H.U m. name is Usman. :)"
+( -3) : "H.U m. name is Usman. :)"
+( -2) : "H., m. name is Usman. :)"
+( -1) : "H., my name is Usman. :)"
+( -1) : "H., my name is Usman. :)"
+(  0) : "Hi, my name is Usman. :)"
+
 Convergence Achieved!
 Number of Iterations: 28
+Time taken: 120 milliseconds
 ```

@@ -16,15 +16,17 @@ int main(int argc, char ** argv)
     {
         (void)printf("\rInvalid args.\n");
         (void)printf("\rExpected: \"<target string>\" <offspring count>\n");
+        (void)printf("\rExample:  ./genetic_algorithm.exe \"This is my target\" 500\n");
         return -EINVAL;
     }
+    (void)printf("\r\n");
 
     const uint16_t offspring_count = (uint16_t)atoi(argv[2]);
     const genome_t target = genome_target_init(argv[1]);
 
     srand(time(NULL)); // required for random number generation
 
-    genome_t parents[2]; 
+    genome_t parents[2];
     parents[0] = genome_init(target.length);
     parents[1] = genome_init(target.length);
 
@@ -55,7 +57,7 @@ int main(int argc, char ** argv)
         // break, if convergence
         if ((parents[0].fitness == 0) || (iterations == UINT64_MAX))
         {
-            (void)printf("\rConvergence Achieved!\n");
+            (void)printf("\r\nConvergence Achieved!\n");
             break;
         }
 
@@ -63,10 +65,10 @@ int main(int argc, char ** argv)
     }
 
     clock_t end_time = clock();
-    double time_taken = (((double)(end_time - start_time)) * (double)1000.0) / CLOCKS_PER_SEC; // In seconds
+    clock_t time_taken = (end_time - start_time) * (clock_t)((double)1000.0 / (double)CLOCKS_PER_SEC); // In seconds
 
     (void)printf("\rNumber of Iterations: %llu\n", iterations);
-    (void)printf("\rTime taken: %f milliseconds\n", time_taken);
+    (void)printf("\rTime taken: %lu milliseconds\n", time_taken);
 
     // cleanup memory
     genome_destroy(&parents[0]);
