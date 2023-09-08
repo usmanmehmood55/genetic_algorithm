@@ -16,6 +16,7 @@ the above mentioned article.
     - [Generational Evolution and Convergence](#generational-evolution-and-convergence)
   - [Notes](#notes)
   - [Sample Output](#sample-output)
+  - [Setup](#setup)
 
 ## What is a Genetic Algorithm
 
@@ -154,7 +155,11 @@ Ideally a genome that EXACTLY matches the target should have a fitness score of 
 and the less it matches, the more negative its fitness should become. 
 
 Currently the fitness calculation is anything but optimized, but I want to keep it 
-that way for ease of understanding and debugging.
+that way for ease of understanding and debugging. It is done inside the `genome_mate()`
+function when an offspring is created.
+```c
+p_offspring->fitness = genome_calculate_fitness(p_target->genes, p_offspring->genes, length);
+```
 
 ### Survival of the Fittest
 
@@ -238,4 +243,28 @@ genetic_algorithm> ./build/genetic_algorithm.exe "Hi, my name is Usman. :)" 1000
 Convergence Achieved!
 Number of Iterations: 28
 Time taken: 120 milliseconds
+```
+
+## Setup
+
+Following tools are required to compile
+- [CMake](https://cmake.org/)
+- [Ninja](https://ninja-build.org/)
+- [GCC](https://gcc.gnu.org/)
+
+In the repository directory, use CMake and Ninja to build
+```bash
+cmake -GNinja -Bbuild
+ninja -C build
+```
+
+To make a `Debug` build with coverage data,
+```bash
+cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Debug
+ninja -C build
+```
+
+To run the test application
+```bash
+./build/ring_buffer.exe
 ```
