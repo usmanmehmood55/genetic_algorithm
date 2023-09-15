@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "genetic_algorithm.h"
+#include "genetic_algorithm_utils.h"
 #include "app_init.h"
 
 /**
@@ -61,7 +61,7 @@ int main(int argc, char ** argv)
     double some = (double)time_taken / (double)iterations;
 
     (void)printf("\r\nConvergence Achieved!\n");
-    (void)printf("\rIterations:      %llu\n", iterations);
+    (void)printf("\rIterations:      %lu\n", iterations);
     (void)printf("\rTime taken:      %lu milliseconds\n", time_taken);
     (void)printf("\rIteration time:  %f msec per iter\n", some);
 

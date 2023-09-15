@@ -25,7 +25,7 @@
         {
             "extensions": 
             [
-              "ms-vscode.cpptools",
+              "ms-vscode.cpptools-extension-pack",
               "jbenden.c-cpp-flylint",
               "ms-vscode.cmake-tools",
               "cschlosser.doxdocgen",

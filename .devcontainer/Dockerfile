@@ -12,10 +12,11 @@ RUN apt-get update && apt-get install -y \
         gdb                              \
         git                              \
         ninja-build                      \
+        cppcheck                         \
     && apt-get clean                     \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install cmake
+RUN pip3 install cmake lizard flawfinder
 
 # Set up a user
 RUN useradd -m vscode
