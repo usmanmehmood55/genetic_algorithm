@@ -6,6 +6,9 @@ but has now been developed and changed enough to be more than a mere port from
 their C++ implementation into C. The subsequent paragraph however is straight from 
 the above mentioned article. 
 
+[![Build and Test](https://github.com/usmanmehmood55/genetic_algorithm/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/usmanmehmood55/genetic_algorithm/actions/workflows/build_and_test.yml)
+[![codecov](https://codecov.io/gh/usmanmehmood55/genetic_algorithm/graph/badge.svg?token=OXCFJ9W6EN)](https://codecov.io/gh/usmanmehmood55/genetic_algorithm)
+
 - [Genetic Algorithm](#genetic-algorithm)
   - [What is a Genetic Algorithm](#what-is-a-genetic-algorithm)
   - [My Implementation](#my-implementation)
