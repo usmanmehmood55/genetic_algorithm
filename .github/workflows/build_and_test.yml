@@ -17,6 +17,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Adding c_asserts submodule
+        run: |
+          git submodule update --init --recursive
+
       - name: Build
         run: |
           cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Test
