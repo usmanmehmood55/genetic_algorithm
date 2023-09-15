@@ -1,0 +1,39 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main", "development" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Install Dependencies
+        run: sudo apt-get install -y ninja-build cmake gcovr
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Adding c_asserts submodule
+        run: |
+          git submodule update --init --recursive
+
+      - name: Build
+        run: |
+          cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Test
+          ninja -C build
+
+      - name: Test
+        run: build/genetic_algorithm
+
+      - name: Generate Coverage Report
+        run: gcov build/CMakeFiles/genetic_algorithm.dir/genetic_algorithm_utils/genetic_algorithm_utils.c.gcno
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: 'genetic_algorithm_utils.c.gcno'

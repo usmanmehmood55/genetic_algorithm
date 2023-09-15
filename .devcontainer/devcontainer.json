@@ -1,0 +1,39 @@
+{
+    "name": "C/C++ Dev Container",
+    
+    "build": 
+    {
+      "dockerfile": "Dockerfile",
+      "context": "..",
+      "args": {}
+    },
+    
+    "runArgs": 
+    [
+      "--cap-add=SYS_PTRACE",
+      "--security-opt",
+      "seccomp=unconfined"
+    ],
+    
+    "postCreateCommand": "echo 'Devcontainer setup is done.'",
+    
+    "remoteUser": "vscode",
+    
+    "customizations": 
+    {
+        "vscode": 
+        {
+            "extensions": 
+            [
+              "ms-vscode.cpptools-extension-pack",
+              "jbenden.c-cpp-flylint",
+              "ms-vscode.cmake-tools",
+              "cschlosser.doxdocgen",
+              "JacquesLucke.gcov-viewer"
+            ],
+            
+            "settings": {"terminal.integrated.shell.linux": "/bin/bash"}
+        }
+    }
+  }
+  
