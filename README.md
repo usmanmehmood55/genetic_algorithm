@@ -41,13 +41,19 @@ a string of character/integer/float/bits. This string is analogous to the Chromo
 
 ## My Implementation
 
+This image explains my implementation of the algorithm.
+![](genetic_algorithm.png)
+
 A singular gene, is represented as a character.
 
 ```c
 typedef char gene_t;
 ```
 
-A genome being a collection of genes, is represented as this structure.
+A genome being a collection of genes, is represented as this structure. It
+contains the pointer to an array of genes, the quantity of those genes being
+the length of the genome, and a placeholder to store the fitness of that genome
+for ease of access.
 
 ```c
 typedef struct genome_t
