@@ -58,9 +58,12 @@ int main(int argc, char ** argv)
     clock_t end_time = clock();
     clock_t time_taken = (end_time - start_time) * (clock_t)((double)1000.0 / (double)CLOCKS_PER_SEC); // In seconds
 
+    double some = (double)time_taken / (double)iterations;
+
     (void)printf("\r\nConvergence Achieved!\n");
-    (void)printf("\rNumber of Iterations: %llu\n", iterations);
-    (void)printf("\rTime taken: %lu milliseconds\n", time_taken);
+    (void)printf("\rIterations:      %llu\n", iterations);
+    (void)printf("\rTime taken:      %lu milliseconds\n", time_taken);
+    (void)printf("\rIteration time:  %f msec per iter\n", some);
 
     // cleanup memory
     genome_destroy(&parents[0]);

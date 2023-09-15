@@ -1,7 +1,5 @@
 #include "genetic_algorithm.h"
 
-#define WORST_FITNESS(length) (int)((int)length * -2)
-
 /**
  * @brief Initialization of the target genome is slightly different
  * as it already has allocated memory and does not need any mutation.
@@ -35,7 +33,7 @@ genome_t genome_init(uint16_t length)
     {
         .genes   = calloc(length, sizeof(gene_t)),
         .length  = length,
-        .fitness = WORST_FITNESS(length),
+        .fitness = -length,
     };
 
     for (uint16_t this_gene = 0; this_gene < length; this_gene++)
@@ -56,6 +54,7 @@ genome_t genome_init(uint16_t length)
 void genome_destroy(genome_t * p_genome)
 {
     free(p_genome->genes);
+    p_genome->genes = NULL;
     p_genome->fitness = 0;
     p_genome->length  = 0;
 }
@@ -144,44 +143,6 @@ int genome_calculate_fitness(const char *target, const char *genome, uint16_t le
 {
     int total_score = 0;
 
-    // for eliminating genes that are not in the TARGET
-    for (uint16_t gene = 0; gene < length; gene++)
-    {
-        int gene_non_existence_score = 0;
-
-        for (uint16_t target_gene = 0; target_gene < length; target_gene++)
-        {
-            if (genome[gene] != target[target_gene])
-            {
-                gene_non_existence_score++;
-            }
-        }
-
-        if (gene_non_existence_score == (int)length)
-        {
-            total_score--;
-        }
-    }
-
-    // for enhancing genes that are in the TARGET
-    for (uint16_t gene = 0; gene < length; gene++)
-    {
-        int gene_existence_score = 0;
-
-        for (uint16_t target_gene = 0; target_gene < length; target_gene++)
-        {
-            if (genome[gene] == target[target_gene])
-            {
-                gene_existence_score++;
-            }
-        }
-
-        if (gene_existence_score == (int)length)
-        {
-            total_score++;
-        }
-    }
-
     // for matching the exact string
     for (uint16_t gene = 0; gene < length; gene++)
     {
@@ -249,7 +210,7 @@ void mutate_genome(char *genome, uint16_t length, uint16_t max_mutation, uint16_
 void genomes_mate(const genome_t * p_target, const genome_t * p_parent_1, const genome_t * p_parent_2, genome_t * p_offspring)
 {
     uint16_t length          = p_target->length;
-    uint16_t crossover_point = (uint16_t)random_in_pos_range((length - 1U), 0);
+    uint16_t crossover_point = (uint16_t)random_in_pos_range((length - 1U), 1);
     bool     flip_sequence   = (bool)random_in_pos_range(1, 0);
 
     // Perform single-point crossover
