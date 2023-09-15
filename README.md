@@ -145,8 +145,8 @@ maxima.
 ### Fitness Calculation
 
 The fitness of a genome is being calculated based on these parameters.
-1. How many genes in this are also present in the target, regardless of the order.
-2. How many genes in this are NOT present in the target.
+1. ~~How many genes in this are also present in the target, regardless of the order.~~
+2. ~~How many genes in this are NOT present in the target.~~
 3. How many genes match the target exactly in order.
 
 Naturally, a heavy bias is given to genes that match with the target in order.
@@ -210,39 +210,37 @@ leading to less in number, but more time consuming iterations.
 ```bash
 genetic_algorithm> ./build/genetic_algorithm.exe "Hi, my name is Usman. :)" 1000
 
-(-40) : "zQ2y*q eYxa-XxN01GmmCNkm"
-(-37) : "zQ2ym. eYxa-XxN01GmmCNkm"
-(-33) : "zQ2ym. eYxa-XxN0sGmmC km"
-(-30) : "zQ2ym. e)xa-XxNUsGmmC km"
-(-28) : "zQ2ym. e)xa-syNUsGmmC km"
-(-25) : "zQ2ym. e)xa syyUsGmmC km"
-(-22) : "HQ2ym. e)xa syyUsGmnC km"
-(-18) : "HQ2ym. e)xa syyUsGmn. :m"
-(-17) : "HQUym. e)xa syyUsGmn. :m"
-(-15) : "H.Uym. e)xa syyUs.mn. :m"
-(-13) : "H.Uym. e)sa syyUs.an. :m"
-(-11) : "H.Uym. e)sa ss Us.an. :m"
-(-11) : "H.Uym. e)sa ss Us.an. :m"
-(-10) : "H.Uym. e)sa is Us.an. :m"
-( -9) : "H.U m. e)sa is Us.an. :m"
-( -8) : "H.U m. easa is Us.an. :m"
-( -7) : "H.U m. ease is Us.an. :m"
-( -7) : "H.U m. ease is Us.an. :m"
-( -7) : "H.U m. ease is Us.an. :m"
-( -6) : "H.U m. ease is Usman. :m"
-( -5) : "H.U m. eame is Usman. :m"
-( -5) : "H.U m. eame is Usman. :m"
-( -4) : "H.U m. eame is Usman. :)"
-( -3) : "H.U m. name is Usman. :)"
-( -3) : "H.U m. name is Usman. :)"
-( -2) : "H., m. name is Usman. :)"
-( -1) : "H., my name is Usman. :)"
-( -1) : "H., my name is Usman. :)"
+(-23) : "BkGd0 +gh4,KSpX2lTuJfIO"
+(-21) : "BkGd0 +gh4,KS UKf_j?nEH"
+(-20) : "BkGd0 +gh4,KS Usf_j?nEH"
+(-19) : "B,Gd0 +gh4,KS Usf_j?nEH"
+(-17) : "B, d0 +gh4,KS Usm_j?nEH"
+(-16) : "B, d0 +gh4 KS Usm_j?nEH"
+(-16) : "B, d0 +gh4 KS Usm_j?nEH"
+(-15) : "B, m0 +gh4 KS Usm_j?nEH"
+(-14) : "B, m0 +gh4 KS Usmaj?nEH"
+(-13) : "B, m0 +gh4 KS Usmaj.nEH"
+(-12) : "B, m0 +ah4 KY Usmaj.nEH"
+(-11) : "B, m0 +ah4 Ks Usmaj.nEH"
+(-10) : "B, m0 nah4 Ks Usmaj.nEH"
+( -9) : "HB, m0 nah4 Ks Usmaj.nEH"
+( -8) : "HB, m0 nahe Ks Usmaj.nEH"
+( -7) : "HB, m4 nahe is Usmaj.nEH"
+( -7) : "HB, m0 nahe is Usmaj.nBH"
+( -6) : "Hi, m0 nahe is Usma'.nEH"
+( -5) : "Hi, my nahe is Usma'.nEH"
+( -4) : "Hi, my nahe is Usma'.n:H"
+( -3) : "Hi, my nahe is Usma'. :H"
+( -2) : "Hi, my nahe is Usman. :H"
+( -1) : "Hi, my name is Usman. :H"
+( -1) : "Hi, my name is Usman. :H"
+( -1) : "Hi, my name is Usman. :H"
 (  0) : "Hi, my name is Usman. :)"
 
 Convergence Achieved!
-Number of Iterations: 28
-Time taken: 120 milliseconds
+Iterations:      25
+Time taken:      56 milliseconds
+Iteration time:  2.240000 msec per iter
 ```
 
 ## Setup
@@ -258,13 +256,19 @@ cmake -GNinja -Bbuild
 ninja -C build
 ```
 
-To make a `Debug` build with coverage data,
+To make a `Debug` build without optimizations,
 ```bash
 cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Debug
 ninja -C build
 ```
 
-To run the test application
+To make a `Test` build with unit tests and coverage data,
 ```bash
-./build/genetic_algorithm.exe
+cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Test
+ninja -C build
+```
+
+To run the application
+```bash
+./build/genetic_algorithm.exe "Your test string" 1000
 ```
