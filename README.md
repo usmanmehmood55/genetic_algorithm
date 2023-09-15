@@ -55,7 +55,7 @@ typedef struct genome_t
 The application expects a string argument that it takes as its target, and the 
 number of offspring to generate. The string must only contain the characters 
 present in the gene pool, which is is defined in 
-[`genetic_algorithm.h`](genetic_algorithm/genetic_algorithm.h).
+[`genetic_algorithm_utils.h`](genetic_algorithm_utils/genetic_algorithm_utils.h).
 ```c
 #define GENE_POOL "!@#$^&*()_-=+,.;:'/\\\"{}[]<>? 1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 ```

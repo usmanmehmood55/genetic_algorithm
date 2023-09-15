@@ -1,4 +1,4 @@
-#include "genetic_algorithm.h"
+#include "genetic_algorithm_utils.h"
 
 /**
  * @brief Initialization of the target genome is slightly different

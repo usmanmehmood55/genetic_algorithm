@@ -34,7 +34,7 @@ else()
 endif()
 
 # Add library subdirectory
-add_subdirectory(genetic_algorithm)
+add_subdirectory(genetic_algorithm_utils)
 add_subdirectory(app_init)
 
 # Conditionally link libraries

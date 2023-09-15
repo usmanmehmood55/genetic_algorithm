@@ -5,15 +5,17 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=non-interactive
 
 # Run package updates and install packages
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        build-essential \
-        cmake \
-        gdb \
-        git \
-        ninja-build \
-    && apt-get clean \
+RUN apt-get update && apt-get install -y \
+        build-essential                  \
+        python3-pip                      \
+        cmake                            \
+        gdb                              \
+        git                              \
+        ninja-build                      \
+    && apt-get clean                     \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install cmake
 
 # Set up a user
 RUN useradd -m vscode

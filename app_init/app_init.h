@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "genetic_algorithm.h"
+#include "genetic_algorithm_utils.h"
 
 /**
  * @brief Processes the given arguments to fill the target genome and offspring count

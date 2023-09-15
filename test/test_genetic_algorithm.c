@@ -1,5 +1,5 @@
 #include "c_asserts.h"
-#include "genetic_algorithm.h"
+#include "genetic_algorithm_utils.h"
 
 static bool test_genome_target_init(void)
 {
