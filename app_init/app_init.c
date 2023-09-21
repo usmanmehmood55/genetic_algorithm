@@ -1,3 +1,14 @@
+/**
+ * @file     app_init.c
+ * @author   Usman Mehmood (usmanmehmood55@gmail.com)
+ * @brief    Checks and initializes the command line arguments passed to the application
+ * @version  0.1
+ * @date     21-09-2023
+ * 
+ * Copyright (c) 2023, Usman Mehmood
+ * 
+ */
+
 #include "app_init.h"
 
 /** 
