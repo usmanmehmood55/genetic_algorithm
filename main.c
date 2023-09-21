@@ -1,3 +1,14 @@
+/**
+ * @file     main.c
+ * @author   Usman Mehmood (usmanmehmood55@gmail.com)
+ * @brief    Main application. Add stuff here.
+ * @version  0.1
+ * @date     21-09-2023
+ * 
+ * Copyright (c) 2023, Usman Mehmood
+ * 
+ */
+
 #include <stdio.h>
 #include <time.h>
 #include "genetic_algorithm_utils.h"

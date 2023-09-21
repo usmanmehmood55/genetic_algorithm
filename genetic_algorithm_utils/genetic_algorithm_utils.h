@@ -1,3 +1,14 @@
+/**
+ * @file     genetic_algorithm_utils.h
+ * @author   Usman Mehmood (usmanmehmood55@gmail.com)
+ * @brief    Utility functions for performing different operations on a genome.
+ * @version  0.1
+ * @date     21-09-2023
+ * 
+ * Copyright (c) 2023, Usman Mehmood
+ * 
+ */
+
 #ifndef GENETIC_ALGORITHM_H_
 #define GENETIC_ALGORITHM_H_
 
@@ -9,15 +20,26 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+/**
+ * @brief This is a gene pool. You can add your own characters to this as long as they don't mess with the
+ * functions and stuff.
+ */
 #define GENE_POOL "!@#$^&*()_-=+,.;:'/\\\"{}[]<>? 1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+/**
+ * @brief A singular gene is just a character
+ */
 typedef char gene_t;
 
+/**
+ * @brief The genome structure. It contains genes, the length of those genes and a fitness score.
+ * The genome must be initialized with the \ref genome_target_init function before use.
+ */
 typedef struct genome_t
 {
-    gene_t   * genes;
-    uint16_t   length;
-    int        fitness;
+    gene_t   * genes;   ///< Pointer to an array of genes.
+    uint16_t   length;  ///< length of the genes.
+    int        fitness; ///< Fitness of the genes.
 } genome_t;
 
 /**

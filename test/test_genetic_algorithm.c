@@ -1,3 +1,14 @@
+/**
+ * @file     test_genetic_algorithm.c
+ * @author   Usman Mehmood (usmanmehmood55@gmail.com)
+ * @brief    Unit tests for genetic_algorithm_utils
+ * @version  0.1
+ * @date     21-09-2023
+ * 
+ * Copyright (c) 2023, Usman Mehmood
+ * 
+ */
+
 #include "c_asserts.h"
 #include "genetic_algorithm_utils.h"
 
