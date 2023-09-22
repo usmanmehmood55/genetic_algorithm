@@ -41,7 +41,8 @@ a string of character/integer/float/bits. This string is analogous to the Chromo
 
 ## My Implementation
 
-This image explains my implementation of the algorithm.
+This image explains my implementation of the algorithm. The code specific
+documentation is hosted on the [project's page](https://usmanmehmood55.github.io/genetic_algorithm/genetic__algorithm__utils_8h.html).
 
 ![genetic algorithm flowchart](genetic_algorithm.png)
 

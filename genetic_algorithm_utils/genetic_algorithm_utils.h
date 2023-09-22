@@ -98,7 +98,8 @@ void genome_print(const genome_t genome);
 int random_in_pos_range(const int upper_limit, const int lower_limit);
 
 /**
- * @brief Function for extracting a mutated / random gene from the available gene pool.
+ * @brief Function for extracting a mutated / random gene from the available gene pool
+ * specified in the \ref GENE_POOL macro.
  *
  * @return char mutated gene character
  */

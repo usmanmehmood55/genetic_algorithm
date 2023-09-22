@@ -12,11 +12,11 @@
 #include "app_init.h"
 
 /** 
- * @brief Validate that all characters in the given string are in the GENE_POOL
+ * @brief Validate that all characters in the given string are in the \ref GENE_POOL
  * 
  * @param str The string to validate
  * 
- * @return true if all characters in the string are in the GENE_POOL, false otherwise
+ * @return true if all characters in the string are in the \ref GENE_POOL, false otherwise
  */
 static bool validate_target_string(const char *str)
 {
@@ -38,7 +38,7 @@ static bool validate_target_string(const char *str)
  * 
  * @details This function performs the following steps:
  * - Validates that the correct number of command line arguments are passed
- * - Validates that the target string contains only characters from the GENE_POOL
+ * - Validates that the target string contains only characters from the \ref GENE_POOL
  * - Validates that the offspring count is within the allowed range
  * - Initializes the random number generator
  * 

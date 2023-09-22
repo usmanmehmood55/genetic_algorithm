@@ -22,7 +22,7 @@
  * 
  * @details This function performs the following steps:
  * - Validates that the correct number of command line arguments are passed
- * - Validates that the target string contains only characters from the GENE_POOL
+ * - Validates that the target string contains only characters from the \ref GENE_POOL
  * - Validates that the offspring count is within the allowed range
  * - Initializes the random number generator
  * 
